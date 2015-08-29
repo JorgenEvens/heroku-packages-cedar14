@@ -1,0 +1,3 @@
+*.tar.gz
+*.sh
+!build.sh
