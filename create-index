@@ -1,0 +1,32 @@
+#!/bin/sh
+
+HOST="http://jorgen.evens.eu/heroku"
+if [ ! -z $1 ]; then
+	HOST="$1"
+fi
+
+md5sum() {
+	if [ ! -z "`which md5sum`" ]; then
+		# Linux
+		`which md5sum` $@ | cut -d" " -f1
+	elif [ ! -z "`which md5`" ]; then
+		# OSX
+		`which md5` -q $@
+	fi
+}
+
+for package in `find . -name '*.sh' -not -name 'build.sh'`; do
+	installer=$(basename "$package")
+	dir=$(dirname "$package")
+	dir=${dir#./}
+	name=$(echo $installer | sed 's/\.sh$//g')
+	md5=$(md5sum "$package")
+
+	line="$name ${HOST}/${dir}/${installer} ${md5}"
+	if [ -f "$dir/$name.dsc" ]; then
+		description=$(head -n 1 "$dir/$name.dsc" 2> /dev/null)
+		line="$line # $description"
+	fi
+
+	echo $line
+done
