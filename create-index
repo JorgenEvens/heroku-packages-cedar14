@@ -1,6 +1,6 @@
 #!/bin/sh
 
-HOST="http://jorgen.evens.eu/heroku"
+HOST="http://jorgen.evens.eu/heroku-cedar14"
 if [ ! -z $1 ]; then
 	HOST="$1"
 fi
