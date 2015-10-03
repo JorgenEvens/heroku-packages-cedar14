@@ -18,7 +18,7 @@ cd pcre-*
 ./configure --prefix="$PREFIX" \
 	--enable-utf \
 	--enable-unicode-properties
-make
+make -j2
 make install DESTDIR="$BUILD_DIR"
 
 cd ${BUILD_DIR}${PREFIX}

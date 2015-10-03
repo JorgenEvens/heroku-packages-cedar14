@@ -67,7 +67,7 @@ export LUAJIT_INC="${BUILD_DIR}${VENDOR}/luajit/include/luajit-2.0"
     --with-cc-opt="-I${BUILD_DIR}${VENDOR}/geoip/include" \
     --with-ld-opt="-L${BUILD_DIR}${VENDOR}/geoip/lib"
 
-make
+make -j2
 make install DESTDIR="$BUILD_DIR"
 
 cd ${BUILD_DIR}${PREFIX}

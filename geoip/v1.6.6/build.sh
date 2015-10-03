@@ -18,7 +18,7 @@ curl "https://codeload.github.com/maxmind/geoip-api-c/tar.gz/v${VERSION}" | tar 
 cd ${NAME}-*
 ./bootstrap
 ./configure --prefix="$PREFIX"
-make
+make -j2
 make install DESTDIR=${BUILD_DIR}
 
 cd ${BUILD_DIR}${PREFIX}

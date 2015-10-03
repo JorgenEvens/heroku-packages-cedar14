@@ -44,7 +44,7 @@ phpize
 ./configure --prefix="$PREFIX"
 
 # Build it
-make
+make -j2
 INSTALL_ROOT="${BUILD_DIR}" make install
 
 ################################################

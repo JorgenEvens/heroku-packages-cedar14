@@ -26,7 +26,7 @@ curl "http://mediaarea.net/download/binary/mediainfo/${VERSION}/MediaInfo_CLI_${
 cd MediaInfo*
 
 ./CLI_Compile.sh --with-libcurl --prefix="${PREFIX}"
-cd "MediaInfo/Project/GNU/CLI" && DESTDIR="${BUILD_DIR}" make install
+cd "MediaInfo/Project/GNU/CLI" && DESTDIR="${BUILD_DIR}" make -j2 install
 
 cd "${BUILD_DIR}${VENDOR}"
 

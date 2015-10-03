@@ -16,7 +16,7 @@ cd $BUILD_DIR
 curl "http://netcologne.dl.sourceforge.net/project/mcrypt/Libmcrypt/${VERSION}/$PACKAGE.tar.gz" | tar -xz
 cd libmcrypt-*
 ./configure --prefix="$PREFIX"
-make
+make -j2
 make install DESTDIR=$BUILD_DIR
 
 cd ${BUILD_DIR}${PREFIX}
