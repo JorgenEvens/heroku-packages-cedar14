@@ -2,12 +2,13 @@
 
 set -e
 
-PHP_NAME="php5-fpm"
-PHP_VERSION="5.5.18"
-PHP_API_VERSION="20121212"
+test -z "$NAME" && >&2 echo "Package NAME not set." && exit 1
+test -z "$VERSION" && >&2 echo "Version for $NAME not set." && exit 1
 
-VERSION="4.23.4.113"
-NAME="newrelic-php5"
+PHP_NAME="php5-fpm"
+test -z "$PHP_VERSION" && PHP_VERSION="5.5.18"
+test -z "$PHP_API_VERSION" && PHP_API_VERSION="20121212"
+
 PACKAGE="${NAME}-${VERSION}"
 
 OUT_DIR="$1"

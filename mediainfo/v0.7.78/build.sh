@@ -7,8 +7,9 @@ set -e
 # https://github.com/JorgenEvens/heroku-modular-buildpack
 
 ### Configuration ###
-VERSION="0.7.78"
-NAME="mediainfo"
+test -z "$NAME" && >&2 echo "Package NAME not set." && exit 1
+test -z "$VERSION" && >&2 echo "Version for $NAME not set." && exit 1
+
 PACKAGE="${NAME}-${VERSION}"
 
 OUTPUT_DIR="$1"

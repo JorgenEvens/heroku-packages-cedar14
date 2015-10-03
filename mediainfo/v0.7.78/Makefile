@@ -1,9 +1,7 @@
 .PHONY: clean
 
-VERSION=4.23.4.113
-NAME=newrelic-php5
-PHP_VERSION=5.5.18
-PHP_API_VERSION=20121212
+NAME=mediainfo
+VERSION=0.7.78
 
 CWD=$(shell pwd)
 OUTPUT=/tmp/out
@@ -14,16 +12,12 @@ debug:
 	docker run -i -t -v "$(CWD):$(OUTPUT)" \
 	 	-e "NAME=$(NAME)" \
 		-e "VERSION=$(VERSION)" \
-		-e "PHP_VERSION=$(PHP_VERSION)" \
-		-e "PHP_API_VERSION=$(PHP_API_VERSION)" \
 		heroku/cedar
 
 $(NAME)-$(VERSION).tar.gz:
 	docker run -i -t -v "$(CWD):$(OUTPUT)" \
 		-e "NAME=$(NAME)" \
 		-e "VERSION=$(VERSION)" \
-		-e "PHP_VERSION=$(PHP_VERSION)" \
-		-e "PHP_API_VERSION=$(PHP_API_VERSION)" \
 		heroku/cedar \
 		sh $(OUTPUT)/build.sh "$(OUTPUT)"
 

@@ -2,12 +2,12 @@
 
 set -e
 
-PHP_NAME="php5-fpm"
-PHP_VERSION="5.5.18"
-
-VERSION="git"
-NAME="runkit"
+test -z "$NAME" && >&2 echo "Name not set for PECL package" && exit 1
+test -z "$VERSION" && >&2 echo "Version not set for PECL package $NAME" && exit 1
 PACKAGE="${NAME}-${VERSION}"
+
+PHP_NAME="php5-fpm"
+test -z "$PHP_VERSION" && PHP_VERSION="5.5.18"
 
 OUT_DIR="$1"
 BUILD_DIR=`mktemp -d`
@@ -29,12 +29,17 @@ mkdir -p /app
 ln -s "${BUILD_DIR}" "${VENDOR_DIR}"
 
 ################################################
-# Build PHP extension
+# Build Redis Plugin
 ################################################
-git clone https://git.php.net/repository/pecl/php/runkit.git "${PACKAGE}"
+if [ "$VERSION" = "git" ]; then
+    git clone "$GIT_URL" "${PACKAGE}"
+else
+    curl "https://pecl.php.net/get/${PACKAGE}.tgz" | tar -xz
+fi
+
 cd ${NAME}-*
 
-# Configure extension
+# Configure phpredis
 phpize
 ./configure --prefix="$PREFIX"
 

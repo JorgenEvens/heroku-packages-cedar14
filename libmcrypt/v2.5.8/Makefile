@@ -1,13 +1,25 @@
 .PHONY: clean
 
+NAME=libmcrypt
+VERSION=2.5.8
+
 CWD=$(shell pwd)
 OUTPUT=/tmp/out
 
-all:
-	docker run -i -v "$(CWD):$(OUTPUT)" heroku/cedar sh $(OUTPUT)/build.sh "$(OUTPUT)"
+all: $(NAME)-$(VERSION).tar.gz
 
 debug:
-	docker run -i -t -v "$(CWD):$(OUTPUT)" heroku/cedar
+	docker run -i -t -v "$(CWD):$(OUTPUT)" \
+	 	-e "NAME=$(NAME)" \
+		-e "VERSION=$(VERSION)" \
+		heroku/cedar
+
+$(NAME)-$(VERSION).tar.gz:
+	docker run -i -t -v "$(CWD):$(OUTPUT)" \
+		-e "NAME=$(NAME)" \
+		-e "VERSION=$(VERSION)" \
+		heroku/cedar \
+		sh $(OUTPUT)/build.sh "$(OUTPUT)"
 
 clean:
-	rm -f libmcrypt-*.{tar.gz,sh}
+	rm -f $(NAME)-*.{tar.gz,sh}

@@ -2,16 +2,19 @@
 
 set -e
 
+test -z "$NAME" && >&2 echo "Package NAME not set." && exit 1
+test -z "$VERSION" && >&2 echo "Version for $NAME not set." && exit 1
+
 OUT_DIR="$1"
 BUILD_DIR=`mktemp -d`
 VENDOR="/app/vendor"
 PREFIX="$VENDOR/nginx"
 VENDOR_DIR="`basename $PREFIX`"
-NAME="nginx-1.8.0"
+PACKAGE="${NAME}-${VERSION}"
 
 cd $BUILD_DIR
 
-curl http://nginx.org/download/nginx-1.8.0.tar.gz | tar -xz
+curl http://nginx.org/download/$PACKAGE.tar.gz | tar -xz
 curl https://codeload.github.com/wandenberg/nginx-push-stream-module/tar.gz/0.5.1 | tar -xz
 curl https://codeload.github.com/openresty/set-misc-nginx-module/tar.gz/v0.29 | tar -xz
 curl https://codeload.github.com/openresty/redis2-nginx-module/tar.gz/v0.12 | tar -xz
@@ -80,14 +83,14 @@ rm "${NGINX_CONF}.orig"
 sed -i "s/root\s\+[^;]\+/root \/app\/src/g" "${NGINX_CONF}"
 
 cd ${BUILD_DIR}${VENDOR}
-tar -caf ${OUT_DIR}/$NAME.tar.gz $VENDOR_DIR
+tar -caf ${OUT_DIR}/$PACKAGE.tar.gz $VENDOR_DIR
 
-cat > ${OUT_DIR}/$NAME.sh << EOF
+cat > ${OUT_DIR}/$PACKAGE.sh << EOF
 #!/bin/sh
 
 dependency_require luajit-2.0.4
 
-unpack "\$INSTALLER_DIR/$NAME.tar.gz" `md5sum $OUT_DIR/$NAME.tar.gz | cut -d" " -f1`
+unpack "\$INSTALLER_DIR/$PACKAGE.tar.gz" `md5sum $OUT_DIR/$PACKAGE.tar.gz | cut -d" " -f1`
 echo 'sed -i "s/listen\s\+80;/listen \$PORT;/g" "/app/vendor/nginx/conf/nginx.conf"' >> "\${BUILD_DIR}/boot.sh"
 echo "/app/vendor/nginx/sbin/nginx &" >> "\${BUILD_DIR}/boot.sh"
 EOF

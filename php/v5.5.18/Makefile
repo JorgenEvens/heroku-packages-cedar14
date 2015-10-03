@@ -1,17 +1,29 @@
-.PHONY: deps clean
+.PHONY: clean
 
 CWD=$(shell pwd)
 OUTPUT="/tmp/out"
+PHP_VERSION=5.5.18
 
-all: deps
-	docker run -i -v "$(CWD):$(OUTPUT)" -e "PHP_VERSION=5.5.18" heroku/cedar sh $(OUTPUT)/build.sh "$(OUTPUT)"
+DEPS=deps deps/libmcrypt.tar.gz deps/pcre.tar.gz
 
-debug: deps
-	docker run -i -t -v "$(CWD):$(OUTPUT)" -e "PHP_VERSION=5.5.18" heroku/cedar
+all: php5-fpm-$(PHP_VERSION).tar.gz
+
+debug: $(DEPS)
+	docker run -i -t -v "$(CWD):$(OUTPUT)" -e "PHP_VERSION=$(PHP_VERSION)" heroku/cedar
 
 deps:
 	mkdir -p deps
+
+php5-fpm-$(PHP_VERSION).tar.gz: $(DEPS)
+	docker run -i -v "$(CWD):$(OUTPUT)" \
+		-e "PHP_VERSION=$(PHP_VERSION)" \
+		heroku/cedar \
+		sh $(OUTPUT)/build.sh "$(OUTPUT)"
+
+deps/libmcrypt.tar.gz:
 	cd ../../libmcrypt/v2.5.8; make; cp libmcrypt-*.tar.gz $(CWD)/deps/libmcrypt.tar.gz
+
+deps/pcre.tar.gz:
 	cd ../../pcre/v8.37; make; cp pcre-*.tar.gz $(CWD)/deps/pcre.tar.gz
 
 clean:
