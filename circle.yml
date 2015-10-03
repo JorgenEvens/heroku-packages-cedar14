@@ -1,0 +1,11 @@
+machine:
+  services:
+    - docker
+
+general:
+  artifacts:
+    - dist
+
+test:
+  override:
+    - make
