@@ -12,7 +12,6 @@ cd $BUILD_DIR
 curl http://luajit.org/download/LuaJIT-2.0.4.tar.gz | tar -xz
 
 cd LuaJIT-*
-./configure --prefix="$PREFIX"
 make PREFIX="$PREFIX"
 make install PREFIX="$PREFIX" DESTDIR=${BUILD_DIR}
 

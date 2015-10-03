@@ -1,3 +1,5 @@
+.PHONY: deps clean
+
 CWD=$(shell pwd)
 OUTPUT="/tmp/out"
 
