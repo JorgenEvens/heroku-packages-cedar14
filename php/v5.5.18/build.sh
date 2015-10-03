@@ -72,9 +72,9 @@ curl $PHP_URL | tar -xj
 cd php-*
 
 # Configure PHP Source
-./configure --prefix=${PREFIX} \
+./configure --prefix="${PREFIX}" \
     --enable-fpm \
-    --disable-cli \
+    --enable-cli \
     --disable-cgi \
     --disable-debug \
     --with-regex=php \
@@ -100,8 +100,8 @@ cd php-*
     --enable-ftp \
     --with-gettext=shared \
     --enable-mbstring \
-    --with-pcre-regex=${BUILD_DIR}${VENDOR}/pcre \
-    --with-pcre-dir=${BUILD_DIR}${VENDOR}/pcre \
+    --with-pcre-regex="${BUILD_DIR}${VENDOR}/pcre" \
+    --with-pcre-dir="${BUILD_DIR}${VENDOR}/pcre" \
     --disable-shmop \
     --enable-sockets \
     --enable-wddx=shared \
@@ -117,6 +117,7 @@ cd php-*
     --with-pdo-mysql=shared \
     --disable-dba \
     --enable-inifile \
+    --with-config-file-scan-dir="${PREFIX}/etc/conf.d" \
     --enable-flatfile \
     --with-mysql=shared \
     --with-mysqli=shared \
@@ -127,7 +128,7 @@ cd php-*
     --with-pgsql=shared \
     --enable-json=shared \
     --without-ldap \
-    --with-mcrypt=shared,${BUILD_DIR}${VENDOR}/libmcrypt \
+    --with-mcrypt=shared,"${BUILD_DIR}${VENDOR}/libmcrypt" \
     --enable-opcache=shared \
     --enable-session \
     --without-snmp \
@@ -143,11 +144,43 @@ INSTALL_ROOT="${BUILD_DIR}" make install
 
 # Move extensions to separate folder
 cd ${BUILD_DIR}${PREFIX}/..
-mkdir extensions
+cat php5-fpm/etc/php-fpm.conf.default | grep -v -P "^;" | grep -P "[^\s].+" > php5-fpm/etc/php-fpm.conf
+sed -i 's/listen\s=\s.*/listen = \/app\/vendor\/php5-fpm\/var\/run\/socket/' php5-fpm/etc/php-fpm.conf
+
+##############################################
+# Prepare extensions to be packaged
+##############################################
+mkdir -p extensions
 mv php5-fpm/lib/php/20121212/* extensions
 
+##############################################
+# Prepare CLI to be packaged
+##############################################
+mkdir -p cli
+cp -a php5-fpm cli/php5-fpm
+rm cli/php5-fpm/sbin/php-fpm
+
+tar -C cli -caf php5-fpm-cli-${PHP_VERSION}.tar.gz php5-fpm
+
+MD5=$(md5sum php5-fpm-cli-${PHP_VERSION}.tar.gz | cut -d" " -f1)
+cat > "php5-fpm-cli-$PHP_VERSION.sh" << EOF
+#!/bin/sh
+
+PHP5_BIN="php5-fpm-cli-${PHP_VERSION}.tar.gz"
+
+dependency_mark "php5-fpm-cli-${PHP_VERSION}"
+dependency_require "php-${PHP_VERSION}"
+
+unpack "\${INSTALLER_DIR}/\${PHP5_BIN}" "$MD5"
+EOF
+
+##############################################
+# Clean CLI from package
+##############################################
+rm php5-fpm/bin/php
+
 # Compress build of PHP5-fpm without extensions
-tar -caf php5-fpm.tar.gz php5-fpm
+tar -caf php5-fpm-${PHP_VERSION}.tar.gz php5-fpm
 
 EXT_SRC="extensions"
 EXT_DIR="lib/php/$PHP_API"
@@ -158,6 +191,11 @@ for pkg in `ls $EXT_SRC | grep -o '[^\.]\+\.' | sort | uniq | tr -d '.'`; do
 	echo "Packaging ${pkg}"
 
 	package="php5-fpm-${pkg}-${PHP_VERSION}"
+    pkg_type=""
+
+    if [ "${pkg}" = "opcache" ]; then
+        pkg_type="zend_"
+    fi
 
 	mkdir -p "${WORK_DIR}/${EXT_DIR}"
 	cp $EXT_SRC/${pkg}.* "${WORK_DIR}/${EXT_DIR}"
@@ -170,6 +208,9 @@ for pkg in `ls $EXT_SRC | grep -o '[^\.]\+\.' | sort | uniq | tr -d '.'`; do
 
 	MD5=$(md5sum ${package}.tar.gz | cut -d" " -f1)
 
+##############################################
+# Extension installer script
+##############################################
 	cat > "${package}.sh" << EOF
 #!/bin/sh
 
@@ -178,17 +219,52 @@ PHP5EXT_MD5="$MD5"
 PHP5EXT_NAME="${pkg}"
 PHP5EXT_BIN="php5-fpm-\${PHP5EXT_NAME}-\${PHP5EXT_VERSION}.tar.gz"
 
-dependency_require "php5-fpm"
-dependency_require "php\$PHP5EXT_VERSION"
+dependency_require "php-\$PHP5EXT_VERSION"
 
 unpack "\${INSTALLER_DIR}/\${PHP5EXT_BIN}" "\$PHP5EXT_MD5"
-php5_ext_enable "\$PHP5EXT_NAME"
+php5_ext_enable "\$PHP5EXT_NAME" ${pkg_type}
 EOF
 
 	rm -Rf ${WORK_DIR}
 done
 
+##############################################
+# Installer script
+##############################################
+cat > "php5-fpm-$PHP_VERSION.sh" << EOF
+#!/bin/sh
+
+PHPFPM_VERSION="$PHP_VERSION"
+PHPFPM_MD5="$(md5sum php5-fpm-${PHP_VERSION}.tar.gz | cut -d" " -f1)"
+PHPFPM_BIN="php5-fpm-\${PHPFPM_VERSION}.tar.gz"
+
+dependency_require "pcre-8.37"
+dependency_require "libmcrypt-2.5.8"
+
+unpack "\${INSTALLER_DIR}/\${PHPFPM_BIN}" "\$PHPFPM_MD5"
+
+print_action "Generating boot portion for PHP5-FPM"
+echo "/app/vendor/php5-fpm/sbin/php-fpm &" >> "\${BUILD_DIR}/boot.sh"
+
+dependency_mark "php-\$PHPFPM_VERSION"
+
+php5_ext_enable() {
+	local config
+	local extension
+	local ext_type
+
+	extension="\$1"
+	ext_type="\$2"
+
+	config="\${BUILD_DIR}/vendor/php5-fpm/etc/php.ini"
+
+	if [ ! -f "\$config" ]; then
+		echo "[PHP]" >> "\$config"
+	fi
+	echo "\${ext_type}extension=\${extension}.so" >> "\$config"
+}
+EOF
+
 # Compress everything into one archive
-mv php5-fpm.tar.gz "$OUTPUT_DIR"
 mv php5-fpm-*.tar.gz "$OUTPUT_DIR"
 mv php5-fpm-*.sh "$OUTPUT_DIR"
