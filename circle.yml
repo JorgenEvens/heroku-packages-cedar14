@@ -4,8 +4,10 @@ machine:
 
 general:
   artifacts:
-    - dist
+    - dist.tar.gz
 
 test:
+  post:
+    - make archive
   override:
     - make

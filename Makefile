@@ -6,7 +6,15 @@ repo: all dist index
 dist:
 	rm -Rf dist
 	mkdir -p dist
-	find . \( -name '*.sh' -not -name 'build.sh' -o -name '*.tar.gz' \) -exec sh -c 'mkdir -p dist/`dirname {}`; cp {} dist/{}' \;
+	find . \( \
+		\( -name '*.sh' -not -name 'build.sh' -not -name 'pecl.sh' \) \
+		-o \( -name '*.tar.gz' -not -path "*/deps/*" \) \) \
+		-exec sh -c 'mkdir -p dist/`dirname {}`; cp {} dist/{}' \;
+
+archive: dist.tar.gz
+
+dist.tar.gz: dist
+	tar -caf dist.tar.gz dist
 
 index:
 	mkdir -p dist
