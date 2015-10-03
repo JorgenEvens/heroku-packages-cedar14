@@ -1,4 +1,6 @@
-.PHONY: dist index clean geoip libmcrypt luajit mediainfo pcre newrelic nginx php
+PACKAGES=geoip libmcrypt luajit mediainfo pcre newrelic nginx php
+.PHONY: dist index clean archive $(PACKAGES)
+
 repo: all dist index
 
 dist:
@@ -10,7 +12,7 @@ index:
 	mkdir -p dist
 	cd dist && ../create-index > index
 
-all: geoip libmcrypt luajit mediainfo pcre newrelic nginx php
+all: $(PACKAGES)
 
 geoip:
 	for makefile in `find geoip/* -name Makefile`; do $(MAKE) -C `dirname $$makefile`; done
