@@ -1,5 +1,26 @@
-PACKAGES=geoip libmcrypt luajit mediainfo pcre newrelic nginx php
+PACKAGES= \
+	geoip \
+	libmcrypt \
+	luajit \
+	pcre \
+	mediainfo \
+	newrelic \
+	nginx \
+	php \
+	phantomjs \
+	wkhtmltopdf \
+	yasm \
+	ffmpeg
+
 .PHONY: dist index clean archive $(PACKAGES)
+DOLLAR=$$$$
+
+define GENPACKAGE
+
+$(1):
+	for makefile in `find $(1)/* -name Makefile`; do $(MAKE) -C `dirname $(DOLLAR)makefile`; done
+
+endef
 
 repo: all dist index
 
@@ -22,29 +43,7 @@ index:
 
 all: $(PACKAGES)
 
-geoip:
-	for makefile in `find geoip/* -name Makefile`; do $(MAKE) -C `dirname $$makefile`; done
-
-libmcrypt:
-	for makefile in `find libmcrypt/* -name Makefile`; do $(MAKE) -C `dirname $$makefile`; done
-
-luajit:
-	for makefile in `find luajit/* -name Makefile`; do $(MAKE) -C `dirname $$makefile`; done
-
-mediainfo:
-	for makefile in `find mediainfo/* -name Makefile`; do $(MAKE) -C `dirname $$makefile`; done
-
-pcre:
-	for makefile in `find pcre/* -name Makefile`; do $(MAKE) -C `dirname $$makefile`; done
-
-newrelic:
-	for makefile in `find newrelic/* -name Makefile`; do $(MAKE) -C `dirname $$makefile`; done
-
-nginx:
-	for makefile in `find nginx/* -name Makefile`; do $(MAKE) -C `dirname $$makefile`; done
-
-php:
-	for makefile in `find php/* -name Makefile`; do $(MAKE) -C `dirname $$makefile`; done
+$(foreach pkg,$(PACKAGES),$(eval $(call GENPACKAGE,$(pkg))))
 
 clean:
 	rm -Rf dist
