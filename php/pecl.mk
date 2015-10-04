@@ -20,7 +20,7 @@ deps/$(PHP_NAME).tar.gz:
 clean-all: clean
 	$(MAKE) -C ../v$(PHP_VERSION) clean
 
-clean:
+clean::
 	rm -Rf deps
-	rm -Rf $(PHP_NAME)*.tar.gz
-	rm -Rf $(PHP_NAME)-*.sh
+	rm -Rf build.sh
+	rm -Rf $(PKG_PREFIX)$(NAME)*.{tar.gz,sh}

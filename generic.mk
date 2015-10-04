@@ -20,5 +20,5 @@ $(PKG_PREFIX)$(NAME)-$(VERSION).tar.gz: $(DEPS)
 		heroku/cedar \
 		sh $(OUTPUT)/build.sh "$(OUTPUT)"
 
-clean:
+clean::
 	rm -f $(NAME)-*.{tar.gz,sh}
