@@ -1,41 +1,26 @@
-.PHONY: clean
+PHP_NAME?=php5-fpm
+DEPS=build.sh deps deps/$(PHP_NAME).tar.gz
+DOCKER_ENV= \
+	-e "GIT_URL=$(GIT_URL)" \
+	-e "PHP_NAME=$(PHP_NAME)" \
+	-e "PHP_VERSION=$(PHP_VERSION)"
+PKG_PREFIX=$(PHP_NAME)-
 
-CWD=$(shell pwd)
-OUTPUT="/tmp/out"
-DEPS=build.sh deps deps/php5-fpm.tar.gz
-
-all: php5-fpm-$(NAME)-$(VERSION).tar.gz
-
-debug: $(DEPS)
-	docker run -i -t -v "$(CWD):$(OUTPUT)" \
-		-e "NAME=$(NAME)" \
-		-e "VERSION=$(VERSION)" \
-		-e "GIT_URL=$(GIT_URL)" \
-		-e "PHP_VERSION=$(PHP_VERSION)" \
-		heroku/cedar
+include ../../generic.mk
 
 deps:
 	mkdir -p deps
 
-php5-fpm-$(NAME)-$(VERSION).tar.gz: $(DEPS)
-	docker run -i -t -v "$(CWD):$(OUTPUT)" \
-		-e "NAME=$(NAME)" \
-		-e "VERSION=$(VERSION)" \
-		-e "GIT_URL=$(GIT_URL)" \
-		-e "PHP_VERSION=$(PHP_VERSION)" \
-		heroku/cedar \
-		sh $(OUTPUT)/build.sh "$(OUTPUT)"
-
 build.sh:
 	cp ../pecl.sh build.sh
 
-deps/php5-fpm.tar.gz:
-	cd ../v$(PHP_VERSION); make; cp php5-fpm-$(PHP_VERSION).tar.gz $(CWD)/deps/php5-fpm.tar.gz
+deps/$(PHP_NAME).tar.gz:
+	cd ../v$(PHP_VERSION); make; cp $(PHP_NAME)-$(PHP_VERSION).tar.gz $(CWD)/deps/$(PHP_NAME).tar.gz
 
 clean-all: clean
 	$(MAKE) -C ../v$(PHP_VERSION) clean
 
 clean:
 	rm -Rf deps
-	rm -Rf php5-fpm*.tar.gz
-	rm -Rf php5-fpm-*.sh
+	rm -Rf $(PHP_NAME)*.tar.gz
+	rm -Rf $(PHP_NAME)-*.sh

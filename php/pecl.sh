@@ -6,7 +6,7 @@ test -z "$NAME" && >&2 echo "Name not set for PECL package" && exit 1
 test -z "$VERSION" && >&2 echo "Version not set for PECL package $NAME" && exit 1
 PACKAGE="${NAME}-${VERSION}"
 
-PHP_NAME="php5-fpm"
+test -z "$PHP_NAME" && PHP_NAME="php5-fpm"
 test -z "$PHP_VERSION" && PHP_VERSION="5.5.18"
 
 OUT_DIR="$1"
@@ -61,7 +61,7 @@ tar -caf "${ARCHIVE_LOCATION}" "${PHP_NAME}"
 ################################################
 MD5="$(md5sum ${ARCHIVE_LOCATION} | cut -d" " -f1)"
 
-cat > "${OUT_DIR}/php5-fpm-${PACKAGE}.sh" << EOF
+cat > "${OUT_DIR}/$(PHP_NAME)-${PACKAGE}.sh" << EOF
 #!/bin/sh
 
 dependency_require "php-$PHP_VERSION"

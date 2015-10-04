@@ -1,5 +1,3 @@
-.PHONY: clean
-
 NAME=runkit
 VERSION=git
 GIT_URL=https://git.php.net/repository/pecl/php/runkit.git
