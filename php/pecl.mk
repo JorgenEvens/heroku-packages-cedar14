@@ -32,8 +32,10 @@ build.sh:
 deps/php5-fpm.tar.gz:
 	cd ../v$(PHP_VERSION); make; cp php5-fpm-$(PHP_VERSION).tar.gz $(CWD)/deps/php5-fpm.tar.gz
 
-clean:
+clean-all: clean
 	$(MAKE) -C ../v$(PHP_VERSION) clean
+
+clean:
 	rm -Rf deps
 	rm -Rf php5-fpm*.tar.gz
 	rm -Rf php5-fpm-*.sh

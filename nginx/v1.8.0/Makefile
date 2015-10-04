@@ -14,9 +14,11 @@ deps/luajit.tar.gz:
 deps/geoip.tar.gz:
 	cd ../../geoip/v1.6.6; make; cp geoip-*.tar.gz $(CWD)/deps/geoip.tar.gz
 
-clean:
+clean-all: clean
 	$(MAKE) -C ../../luajit/v2.0.4 clean
 	$(MAKE) -C ../../geoip/v1.6.6 clean
+
+clean:
 	rm -Rf deps
 	rm -Rf nginx-*.tar.gz
 	rm -Rf nginx-*.sh
