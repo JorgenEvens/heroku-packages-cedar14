@@ -1,6 +1,6 @@
 .PHONY: clean
 
-NAME=pecl
+NAME=mongo
 VERSION=1.6.11
 PHP_VERSION=5.5.18
 
