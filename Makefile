@@ -29,12 +29,12 @@ dist:
 	mkdir -p dist
 	find . \( \
 		\( -name '*.sh' -not -name 'build.sh' -not -name 'pecl.sh' \) \
-		-o \( -name '*.tar.gz' -not -path "*/deps/*" \) \) \
+		-o \( -name '*/*.tar.gz' -not -path "*/deps/*" \) \) \
 		-exec sh -c 'mkdir -p dist/`dirname {}`; cp {} dist/{}' \;
 
 archive: dist.tar.gz
 
-dist.tar.gz: dist
+dist.tar.gz: dist index
 	tar -caf dist.tar.gz dist
 
 index:
