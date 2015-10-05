@@ -1,4 +1,4 @@
-# Heroku Packages Cedar 14
+# Heroku Packages Cedar 14 [![Circle CI](https://circleci.com/gh/JorgenEvens/heroku-packages-cedar14.svg?style=svg)](https://circleci.com/gh/JorgenEvens/heroku-packages-cedar14)
 
 This repository provides the build scripts for packages that can be used in conjunction with the [heroku modular buildpack](https://github.com/JorgenEvens/heroku-modular-buildpack) on Heroku's cedar14 stack.
 
