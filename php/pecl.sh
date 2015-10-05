@@ -61,7 +61,7 @@ tar -caf "${ARCHIVE_LOCATION}" "${PHP_NAME}"
 ################################################
 MD5="$(md5sum ${ARCHIVE_LOCATION} | cut -d" " -f1)"
 
-cat > "${OUT_DIR}/$(PHP_NAME)-${PACKAGE}.sh" << EOF
+cat > "${OUT_DIR}/${PHP_NAME}-${PACKAGE}.sh" << EOF
 #!/bin/sh
 
 dependency_require "php-$PHP_VERSION"
