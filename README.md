@@ -18,4 +18,6 @@ make
 
 ## Download
 
-If you are interested in a download of a pre-built repository, please leave me a message and I will provide a download link or running repository.
+Check the [releases page](https://github.com/JorgenEvens/heroku-packages-cedar14/releases/latest) for an archive containing a built repository of that specific version.
+
+If you need a more up-to-date archive you will have to build it yourself, or leave me a message and I will attempt to provide a more recent build.
