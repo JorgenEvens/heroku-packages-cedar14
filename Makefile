@@ -30,8 +30,9 @@ dist:
 	rm -Rf dist
 	mkdir -p dist
 	find . \( \
-		\( -name '*.sh' -not -name 'build.sh' -not -name 'pecl.sh' \) \
-		-o \( -name '*/*.tar.gz' -not -path "*/deps/*" \) \) \
+			\( -name '*.sh' -not -name 'build.sh' -not -name 'pecl.sh' \) \
+			-o \( -name '*.tar.gz' -not -path "*/deps/*" \) \
+		\) -not -path "./dist/*" \
 		-exec sh -c 'mkdir -p dist/`dirname {}`; cp {} dist/{}' \;
 
 archive: dist.tar.gz
