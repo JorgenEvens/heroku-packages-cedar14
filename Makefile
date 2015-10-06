@@ -10,7 +10,9 @@ PACKAGES= \
 	phantomjs \
 	wkhtmltopdf \
 	yasm \
-	ffmpeg
+	ffmpeg \
+	nodejs \
+	composer
 
 .PHONY: dist index clean archive $(PACKAGES)
 DOLLAR=$$$$
@@ -35,7 +37,7 @@ dist:
 archive: dist.tar.gz
 
 dist.tar.gz: dist index
-	tar -caf dist.tar.gz dist
+	tar -caf dist.tar.gz dist/
 
 index:
 	mkdir -p dist
