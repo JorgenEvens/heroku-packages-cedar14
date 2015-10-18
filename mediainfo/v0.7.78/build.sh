@@ -43,7 +43,7 @@ cat > "${OUTPUT_DIR}/${PACKAGE}.sh" << EOF
 unpack "\${INSTALLER_DIR}/${ARCHIVE_NAME}" "$MD5"
 
 print_action "Generating configuration portion for $NAME $VERSION"
-echo "export PATH=\"\$PATH:${PREFIX}/bin\"" >> "\${BUILD_DIR}/configure.sh"
+env_extend PATH "${PREFIX}/bin"
 
 dependency_mark "${NAME}"
 dependency_mark "${PACKAGE}"

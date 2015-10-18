@@ -242,9 +242,14 @@ dependency_require "pcre-8.37"
 dependency_require "libmcrypt-2.5.8"
 
 unpack "\${INSTALLER_DIR}/\${PHPFPM_BIN}" "\$PHPFPM_MD5"
+env_extend PATH "${PREFIX}/bin"
+env_extend PATH "${PREFIX}/sbin"
+
+mkdir -p "${VENDOR}"
+ln -s "\${BUILD_DIR}/vendor/${NAME}" "${PREFIX}"
 
 print_action "Generating boot portion for PHP5-FPM"
-echo "/app/vendor/php5-fpm/sbin/php-fpm &" >> "\${BUILD_DIR}/boot.sh"
+echo "${PREFIX}/sbin/php-fpm &" >> "\${BUILD_DIR}/boot.sh"
 
 dependency_mark "php-\$PHPFPM_VERSION"
 

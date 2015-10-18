@@ -91,6 +91,9 @@ cat > ${OUT_DIR}/$PACKAGE.sh << EOF
 dependency_require luajit-2.0.4
 
 unpack "\$INSTALLER_DIR/$PACKAGE.tar.gz" `md5sum $OUT_DIR/$PACKAGE.tar.gz | cut -d" " -f1`
-echo 'sed -i "s/listen\s\+80;/listen \$PORT;/g" "/app/vendor/nginx/conf/nginx.conf"' >> "\${BUILD_DIR}/boot.sh"
-echo "/app/vendor/nginx/sbin/nginx &" >> "\${BUILD_DIR}/boot.sh"
+echo 'sed -i "s/listen\s\+80;/listen \$PORT;/g" "${PREFIX}/conf/nginx.conf"' >> "\${BUILD_DIR}/boot.sh"
+echo "${PREFIX}/sbin/nginx &" >> "\${BUILD_DIR}/boot.sh"
+
+env_extend PATH "${PREFIX}/bin"
+env_extend PATH "${PREFIX}/sbin"
 EOF

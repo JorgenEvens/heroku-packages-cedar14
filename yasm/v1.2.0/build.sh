@@ -16,7 +16,7 @@ echo http://www.tortall.net/projects/yasm/releases/${PACKAGE}.tar.gz
 curl "http://www.tortall.net/projects/yasm/releases/${PACKAGE}.tar.gz" | tar -xz
 
 cd ${NAME}-*
-./configure --prefix="/app/vendor/${NAME}"
+./configure --prefix="${PREFIX}"
 make -j2
 DESTDIR="${BUILD_DIR}" make install
 
@@ -30,6 +30,6 @@ cat > "${OUT_DIR}/$PACKAGE.sh" << EOF
 #!/bin/sh
 
 unpack "\$INSTALLER_DIR/$PACKAGE.tar.gz" `md5sum $OUT_DIR/$PACKAGE.tar.gz | cut -d" " -f1`
-echo 'export LD_LIBRARY_PATH="\$LD_LIBRARY_PATH:/app/vendor/${NAME}/lib"' >> \${BUILD_DIR}/configure.sh
-echo 'export PATH="\$PATH:/app/vendor/${NAME}/bin"' >> \${BUILD_DIR}/configure.sh
+env_extend PATH "${PREFIX}/bin"
+env_extend LD_LIBRARY_PATH "${PREFIX}/lib"
 EOF

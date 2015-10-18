@@ -7,8 +7,8 @@ test -z "$VERSION" && >&2 echo "Version for $NAME not set." && exit 1
 
 OUT_DIR="$1"
 BUILD_DIR=`mktemp -d`
-PREFIX="/app/vendor/luajit"
-VENDOR_DIR="`basename $PREFIX`"
+VENDOR_DIR="/app/vendor"
+PREFIX="${VENDOR_DIR}/${NAME}"
 PACKAGE="${NAME}-${VERSION}"
 
 cd $BUILD_DIR
@@ -28,6 +28,6 @@ cat > ${OUT_DIR}/$PACKAGE.sh << EOF
 #!/bin/sh
 
 unpack "\$INSTALLER_DIR/$PACKAGE.tar.gz" `md5sum $OUT_DIR/$PACKAGE.tar.gz | cut -d" " -f1`
-echo 'export LD_LIBRARY_PATH="\$LD_LIBRARY_PATH:/app/vendor/luajit/lib"' >> \${BUILD_DIR}/boot.sh
-echo 'export PATH="\$PATH:/app/vendor/luajit/bin"' >> \${BUILD_DIR}/boot.sh
+env_extend PATH "${PREFIX}/bin"
+env_extend LD_LIBRARY_PATH "${PREFIX}/lib"
 EOF
