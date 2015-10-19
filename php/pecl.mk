@@ -2,6 +2,7 @@ PHP_NAME?=php5-fpm
 DEPS=build.sh deps deps/$(PHP_NAME).tar.gz
 DOCKER_ENV= \
 	-e "GIT_URL=$(GIT_URL)" \
+	-e "GIT_BRANCH=$(GIT_BRANCH)" \
 	-e "PHP_NAME=$(PHP_NAME)" \
 	-e "PHP_VERSION=$(PHP_VERSION)"
 PKG_PREFIX=$(PHP_NAME)-

@@ -32,7 +32,8 @@ ln -s "${BUILD_DIR}" "${VENDOR_DIR}"
 # Build Redis Plugin
 ################################################
 if [ "$VERSION" = "git" ]; then
-    git clone "$GIT_URL" "${PACKAGE}"
+    test ! -z "$GIT_BRANCH" && GIT_BRANCH="-b ${GIT_BRANCH}"
+    git clone ${GIT_BRANCH} "$GIT_URL" "${PACKAGE}"
 else
     curl "https://pecl.php.net/get/${PACKAGE}.tgz" | tar -xz
 fi
